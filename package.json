@@ -1,0 +1,24 @@
+{
+  "name": "agverse-fullstack",
+  "version": "1.0.0",
+  "description": "AGverse - The Intelligence of the Earth (React + Node.js Clone)",
+  "scripts": {
+    "dev": "node dev.js",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "lint:design": "impeccable detect client/src",
+    "install:all": "npm install --prefix client && npm install --prefix server",
+    "start": "node server/server.js"
+  },
+  "keywords": [
+    "agverse",
+    "react",
+    "nodejs",
+    "express",
+    "agriculture",
+    "tailwind"
+  ],
+  "author": "",
+  "license": "ISC"
+}

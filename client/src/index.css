@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    background-color: #021312;
+  }
+
+  body {
+    background-color: #021312;
+    color: #F3F7F6;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: #ACD5D1;
+    color: #021312;
+  }
+
+  /* Browser surface styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #021312;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #0B2D29;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ACD5D1;
+  }
+
+  :focus-visible {
+    outline: 2px solid #ACD5D1;
+    outline-offset: 2px;
+  }
+}
+
+/* Tactile craft utilities */
+.ag-field-surface {
+  background: #06201D;
+  border: 1px solid rgba(172, 213, 209, 0.15);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ag-field-surface:hover {
+  border-color: rgba(172, 213, 209, 0.4);
+  background: #092824;
+}
+
+.ag-btn-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background-color: #ACD5D1;
+  color: #021312;
+  font-weight: 600;
+  padding: 0.85rem 1.6rem;
+  border-radius: 9999px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ag-btn-solid:hover {
+  background-color: #C2E7E4;
+  transform: translateY(-1px);
+}
+
+.ag-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background-color: transparent;
+  color: #F3F7F6;
+  font-weight: 500;
+  padding: 0.85rem 1.6rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(172, 213, 209, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ag-btn-ghost:hover {
+  background-color: #0A2B27;
+  border-color: #ACD5D1;
+  color: #ACD5D1;
+}
+
+/* Subtle terrain line texture */
+.bg-topo-subtle {
+  background-image: radial-gradient(rgba(172, 213, 209, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
