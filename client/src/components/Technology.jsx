@@ -1,175 +1,205 @@
 import React, { useState } from 'react';
-import { Cpu, Bot, Radio, ArrowRight, ShieldCheck, Zap, Layers } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, X, CheckCircle2, Cpu, Bot, Plane, Layers } from 'lucide-react';
 
-export default function Technology({ onOpenAudit }) {
-  const [activeTab, setActiveTab] = useState(0);
+export default function Technology({ t }) {
+  const [activeModalItem, setActiveModalItem] = useState(null);
 
-  const technologies = [
-    {
-      id: 'ai-brain',
-      role: 'The “Brain” of AGverse',
-      title: 'AI & Machine Learning',
-      description: 'Our algorithms analyze soil, weather, and crop health to optimize growth cycles instantly.',
-      image: '/assets/AI-brain.jpeg',
-      icon: Cpu,
-      specs: [
-        { label: 'Analytical Engine', value: 'Multi-layer Agronomic Neural Net' },
-        { label: 'Input Channels', value: 'Soil Moisture, NPK Levels, Evapotranspiration' },
-        { label: 'Decision Latency', value: '< 240ms Subsurface Valve Modulation' }
-      ]
-    },
-    {
-      id: 'robotics',
-      role: 'The “Hands” of the operation.',
-      title: 'Autonomous Robotics',
-      description: 'Sleek, solar-powered robots handle planting, weeding, and harvesting with 100% precision.',
-      image: '/assets/AI-brain-2.jpeg',
-      icon: Bot,
-      specs: [
-        { label: 'Power Architecture', value: 'High-Efficiency Bifacial Solar Array' },
-        { label: 'Navigation Accuracy', value: 'RTK-GNSS with Millimeter Real-Time Correction' },
-        { label: 'Operational Window', value: 'Continuous 24/7 Day/Night Cultivation' }
-      ]
-    },
-    {
-      id: 'drones',
-      role: 'The “Eyes” in the sky',
-      title: 'Advanced Drone Fleet',
-      description: 'Multi-spectral sensors map thousands of hectares in minutes, identifying issues before they become problems.',
-      image: '/assets/AI-brain-3.jpeg',
-      icon: Radio,
-      specs: [
-        { label: 'Sensor Suite', value: '5-Band Multispectral + Thermal Infrared' },
-        { label: 'Daily Survey Scope', value: 'Up to 5,000 Hectares per Squadron' },
-        { label: 'Anomaly Detection', value: 'Early Canopy Stress, Water Deficit, Chlorophyll Drop' }
-      ]
-    }
+  const icons = [
+    <Cpu className="w-5 h-5 text-[#8BC34A]" />,
+    <Bot className="w-5 h-5 text-[#8BC34A]" />,
+    <Plane className="w-5 h-5 text-[#8BC34A]" />
   ];
 
-  const current = technologies[activeTab];
-  const CurrentIcon = current.icon;
-
   return (
-    <section id="technology" className="relative py-28 sm:py-36 bg-[#041A18] overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8">
-        {/* Editorial Heading */}
-        <div className="max-w-3xl mb-16 sm:mb-20">
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
-            <span className="block font-manrope font-extrabold text-white">
-              Hardware Meets
-            </span>
-            <span className="block font-marcellus font-normal text-[#ACD5D1]">
-              Infinite Growth.
-            </span>
-          </h2>
-          <p className="text-base sm:text-lg text-[#96B1AC] leading-relaxed">
-            We deploy the world’s most advanced technologies to the field.
-          </p>
+    <section
+      id="technology"
+      aria-labelledby="tech-heading"
+      className="section-padding bg-[#14201B] text-white relative overflow-hidden"
+    >
+      {/* Subtle background ambient blur */}
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#0B3D2E]/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#8BC34A]/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="section-container relative z-10">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-20 text-center mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 text-[#8BC34A] text-xs font-semibold uppercase tracking-wider mb-4"
+          >
+            <Layers className="w-3.5 h-3.5 text-[#8BC34A]" />
+            <span>{t.technology.title}</span>
+          </motion.div>
+          <motion.h2
+            id="tech-heading"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-heading font-extrabold text-3xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight"
+          >
+            {t.technology.title}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mt-4 text-base sm:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed"
+          >
+            {t.technology.subtitle}
+          </motion.p>
         </div>
 
-        {/* Interactive Master-Detail Architecture */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Navigation Controls (Brain, Hands, Eyes) */}
-          <div className="lg:col-span-4 space-y-3">
-            {technologies.map((tech, idx) => {
-              const Icon = tech.icon;
-              const isSelected = activeTab === idx;
-              return (
-                <button
-                  key={tech.id}
-                  onClick={() => setActiveTab(idx)}
-                  className={`w-full text-left p-6 rounded-2xl transition-all duration-300 border flex items-center justify-between group ${
-                    isSelected
-                      ? 'bg-[#06201D] border-[#ACD5D1] shadow-xl'
-                      : 'bg-[#021312]/60 border-[#ACD5D1]/15 hover:border-[#ACD5D1]/40'
-                  }`}
+        {/* 3 Alternating Image/Text Rows */}
+        <div className="flex flex-col gap-24 lg:gap-32">
+          {t.technology.items.map((item, index) => {
+            const isReversed = index % 2 === 1;
+
+            return (
+              <div
+                key={item.id}
+                className={`grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center ${
+                  isReversed ? 'lg:grid-flow-dense' : ''
+                }`}
+              >
+                {/* Image Column (6 cols) */}
+                <motion.div
+                  initial={{ opacity: 0, x: isReversed ? 40 : -40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.7 }}
+                  className={`lg:col-span-6 ${isReversed ? 'lg:col-start-7' : ''}`}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
-                      isSelected ? 'bg-[#ACD5D1] text-[#021312]' : 'bg-[#0B2D29] text-[#ACD5D1]'
-                    }`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-mono text-[#96B1AC] uppercase tracking-wider mb-0.5">
-                        {tech.role}
-                      </div>
-                      <div className="text-lg font-bold text-white font-manrope">
-                        {tech.title}
-                      </div>
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 group aspect-[4/3] bg-[#0E1713]">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#14201B]/80 via-transparent to-transparent opacity-60" />
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white/80 bg-black/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+                      <span className="font-mono uppercase tracking-wider text-[#8BC34A]">
+                        System Layer 0{index + 1}
+                      </span>
+                      <span>Verified UAE Field Spec</span>
                     </div>
                   </div>
+                </motion.div>
 
-                  <ArrowRight className={`w-4 h-4 transition-transform duration-200 ${
-                    isSelected ? 'text-[#ACD5D1] translate-x-1' : 'text-[#96B1AC] opacity-40'
-                  }`} />
-                </button>
-              );
-            })}
+                {/* Text Column (6 cols) */}
+                <motion.div
+                  initial={{ opacity: 0, x: isReversed ? -40 : 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.7, delay: 0.1 }}
+                  className={`lg:col-span-6 flex flex-col justify-center ${
+                    isReversed ? 'lg:col-start-1' : ''
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
+                    {icons[index]}
+                  </div>
 
-            {/* Quick action card */}
-            <div className="p-6 rounded-2xl bg-[#0B2D29]/60 border border-[#ACD5D1]/20 mt-6">
-              <h4 className="text-sm font-semibold text-white mb-2">Deploy for Your Land</h4>
-              <p className="text-xs text-[#96B1AC] mb-4 leading-relaxed">
-                Experience precision robotics and autonomous mapping customized for your exact climate and crop varieties.
-              </p>
-              <button
-                onClick={onOpenAudit}
-                className="ag-btn-solid w-full text-xs py-2.5 font-bold uppercase tracking-wider"
-              >
-                Request a Tech Audit
-              </button>
-            </div>
-          </div>
+                  <span className="text-xs font-mono font-bold tracking-widest text-[#8BC34A] uppercase mb-2">
+                    0{index + 1} · Architecture
+                  </span>
 
-          {/* Active Blueprint & Live Visual Plate */}
-          <div className="lg:col-span-8">
-            <div className="ag-field-surface rounded-2xl overflow-hidden border border-[#ACD5D1]/30 shadow-2xl">
-              {/* High-res authentic image viewport */}
-              <div className="relative h-72 sm:h-96 w-full overflow-hidden">
-                <img
-                  src={current.image}
-                  alt={current.title}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06201D] via-transparent to-transparent" />
-                
-                {/* Active Role Floating Tag */}
-                <div className="absolute top-5 left-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#021312]/85 backdrop-blur-md border border-[#ACD5D1]/30 text-xs font-mono text-[#ACD5D1]">
-                  <CurrentIcon className="w-3.5 h-3.5 text-[#ACD5D1]" />
-                  <span>{current.role}</span>
-                </div>
-              </div>
-
-              {/* Technical Description & Specs */}
-              <div className="p-8 sm:p-10 space-y-8">
-                <div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-white font-manrope mb-3">
-                    {current.title}
+                  <h3 className="font-heading font-extrabold text-2xl sm:text-4xl text-white tracking-tight mb-4">
+                    {item.title}
                   </h3>
-                  <p className="text-base text-[#96B1AC] leading-relaxed max-w-2xl">
-                    {current.description}
-                  </p>
-                </div>
 
-                {/* Engineering Specifications Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[#ACD5D1]/15">
-                  {current.specs.map((spec, i) => (
-                    <div key={i} className="p-4 rounded-xl bg-[#021312]/70 border border-[#ACD5D1]/10">
-                      <div className="text-[11px] font-mono uppercase tracking-wider text-[#96B1AC] mb-1">
-                        {spec.label}
-                      </div>
-                      <div className="text-sm font-semibold text-white font-manrope">
-                        {spec.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                  <p className="text-base text-white/80 leading-relaxed mb-8">
+                    {item.description}
+                  </p>
+
+                  <div>
+                    <button
+                      onClick={() => setActiveModalItem(item)}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-[#8BC34A] hover:text-[#9CCC65] transition-all group py-1 border-b border-[#8BC34A]/40 hover:border-[#8BC34A]"
+                    >
+                      <span>{t.technology.learnMore}</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Technology Detail Modal */}
+      <AnimatePresence>
+        {activeModalItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModalItem(null)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            {/* Modal Dialog Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 260 }}
+              className="relative w-full max-w-lg bg-[#0B3D2E] text-white rounded-2xl p-6 sm:p-8 border border-[#8BC34A]/30 shadow-2xl z-10"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
+            >
+              <div className="flex items-start justify-between pb-4 border-b border-white/10">
+                <div>
+                  <span className="text-xs font-mono uppercase text-[#8BC34A] tracking-wider">
+                    {t.technology.modalTitle}
+                  </span>
+                  <h4 id="modal-title" className="font-heading font-bold text-xl sm:text-2xl text-white mt-1">
+                    {activeModalItem.title}
+                  </h4>
+                </div>
+                <button
+                  onClick={() => setActiveModalItem(null)}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                  aria-label={t.technology.modalClose}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* 3 Detailed Technical Bullets */}
+              <div className="py-6 flex flex-col gap-4">
+                {activeModalItem.bullets.map((bullet, idx) => (
+                  <div key={idx} className="flex items-start gap-3.5 bg-white/5 p-3.5 rounded-xl border border-white/5">
+                    <CheckCircle2 className="w-5 h-5 text-[#8BC34A] shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/90 leading-relaxed">
+                      {bullet}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-white/10 flex justify-end">
+                <button
+                  onClick={() => setActiveModalItem(null)}
+                  className="btn-primary text-xs !py-2.5 !px-6"
+                >
+                  {t.technology.modalClose}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

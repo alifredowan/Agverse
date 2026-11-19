@@ -4,30 +4,55 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        ag: {
-          teal: '#ACD5D1',
-          'teal-light': '#D4EBE9',
-          'teal-subtle': '#ACD5D118',
-          dark: '#021312',
-          'dark-loam': '#06201D',
-          'dark-surface': '#0A2B27',
-          'dark-elevated': '#0F3833',
-          chlorophyll: '#2CC56F',
-          wheat: '#E4D5BE',
-          muted: '#96B1AC',
-          border: 'rgba(172, 213, 209, 0.16)',
-          'border-strong': 'rgba(172, 213, 209, 0.35)'
-        }
+        forest: {
+          DEFAULT: '#0B3D2E', // Primary deep forest green
+          deep: '#06251C',
+          dark: '#082E23',
+          card: '#0E4434',
+          light: '#135340',
+        },
+        lime: {
+          DEFAULT: '#8BC34A', // Accent fresh lime
+          hover: '#9CCC65',
+          light: '#DCEDC8',
+          glow: 'rgba(139, 195, 74, 0.4)',
+        },
+        sand: {
+          DEFAULT: '#F5F1E8', // Light background sand
+          light: '#FAF7F2',
+          surface: '#EFEAE0',
+          dark: '#DFD8CC',
+        },
+        charcoal: {
+          DEFAULT: '#14201B', // Dark charcoal text/sections
+          deep: '#0D1512',
+          card: '#1B2C25',
+          surface: '#223830',
+        },
       },
       fontFamily: {
-        manrope: ['Manrope', 'sans-serif'],
-        marcellus: ['Marcellus', 'serif'],
+        heading: ['Sora', 'Poppins', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        arabic: ['Tajawal', 'sans-serif'],
+      },
+      borderRadius: {
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+      },
+      maxWidth: {
+        content: '1200px',
+      },
+      boxShadow: {
+        'soft': '0 10px 30px -10px rgba(11, 61, 46, 0.08)',
+        'soft-dark': '0 10px 30px -10px rgba(0, 0, 0, 0.35)',
+        'glow-lime': '0 0 25px rgba(139, 195, 74, 0.3)',
       },
       transitionTimingFunction: {
-        'smooth-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'smooth': 'cubic-bezier(0.16, 1, 0.3, 1)',
       }
     },
   },

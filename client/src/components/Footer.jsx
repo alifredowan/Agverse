@@ -1,110 +1,173 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { Globe, ArrowUp } from 'lucide-react';
 
-export default function Footer({ onOpenAudit }) {
+export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navLinks = [
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.technology, href: '#technology' },
+    { label: t.nav.sustainability, href: '#sustainability' },
+    { label: t.nav.roi, href: '#roi' },
+    { label: t.nav.proof, href: '#case-studies' },
+    { label: t.nav.faq, href: '#faq' },
+    { label: t.nav.contact, href: '#contact' },
+  ];
+
   return (
-    <footer className="relative bg-[#010D0C] border-t border-[#ACD5D1]/15 pt-16 pb-12 text-[#96B1AC]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12 border-b border-[#ACD5D1]/10">
-          {/* Logo & Manifesto */}
-          <div className="md:col-span-2 space-y-4">
-            <a href="#" className="inline-block transition-opacity hover:opacity-90">
-              <img
-                src="/assets/Asset-1.svg"
-                alt="AGVERSE"
-                className="h-9 sm:h-11 w-auto object-contain"
-              />
+    <footer className="bg-[#0D1512] text-white/80 pt-16 pb-12 border-t border-white/10">
+      <div className="section-container">
+        {/* Top Tier */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10 items-start">
+          {/* Logo & Tagline (5 cols) */}
+          <div className="md:col-span-5">
+            <a
+              href="#home"
+              className="inline-flex items-center gap-2.5 mb-4 group"
+              aria-label="AGverse Home"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#0B3D2E] flex items-center justify-center p-1.5 border border-[#8BC34A]/40 shadow-sm">
+                <svg
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-full h-full text-[#8BC34A]"
+                >
+                  <circle cx="20" cy="20" r="18" stroke="#8BC34A" strokeWidth="2.5" strokeDasharray="3 3" />
+                  <path
+                    d="M12 28C14 20 20 13 28 12C28 20 22 27 12 28Z"
+                    fill="#8BC34A"
+                    fillOpacity="0.85"
+                  />
+                  <path
+                    d="M14 26C18 24 23 20 26 14"
+                    stroke="#0B3D2E"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <span className="font-heading font-extrabold text-2xl tracking-tight text-white">
+                AG<span className="text-[#8BC34A]">verse</span>
+              </span>
             </a>
-            <p className="text-sm text-[#96B1AC] max-w-md leading-relaxed">
-              Global food producing operating system integrating artificial intelligence, robotics, drones, and precision data to establish zero-waste agriculture.
+
+            <p className="text-sm text-white/70 max-w-sm mb-4">
+              {t.footer.tagline}
             </p>
-            <div className="flex items-center gap-2 text-sm text-[#ACD5D1] font-mono pt-2">
-              <MapPin className="w-4 h-4 text-[#ACD5D1]" />
-              <span>Dubai, UAE</span>
+
+            <div className="text-xs text-white/50">
+              {t.footer.location}
             </div>
           </div>
 
-          {/* Platform Navigation */}
-          <div>
-            <h4 className="text-xs uppercase tracking-widest text-white font-mono mb-4">
-              Platform
-            </h4>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <a href="#about" className="hover:text-[#ACD5D1] transition-colors">
-                  Philosophy & About
-                </a>
-              </li>
-              <li>
-                <a href="#technology" className="hover:text-[#ACD5D1] transition-colors">
-                  Autonomous Technology
-                </a>
-              </li>
-              <li>
-                <a href="#sustainability" className="hover:text-[#ACD5D1] transition-colors">
-                  Sustainability Promise
-                </a>
-              </li>
+          {/* Nav links (4 cols) */}
+          <div className="md:col-span-4">
+            <div className="text-xs font-mono uppercase tracking-wider text-[#8BC34A] font-semibold mb-4">
+              Navigation
+            </div>
+            <ul className="grid grid-cols-2 gap-2 text-sm">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className="hover:text-[#8BC34A] transition-colors py-1 inline-block"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Action Column */}
-          <div>
-            <h4 className="text-xs uppercase tracking-widest text-white font-mono mb-4">
-              Evaluation
-            </h4>
-            <p className="text-xs text-[#96B1AC] leading-relaxed mb-4">
-              Receive a comprehensive technological audit of your farm soil, topography, and irrigation infrastructure.
-            </p>
+          {/* Social Links & Back to Top (3 cols) */}
+          <div className="md:col-span-3 flex flex-col md:items-end justify-between">
+            <div className="flex items-center gap-3 mb-6">
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com/company/agverse-tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
+                aria-label="LinkedIn"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8m1.4 9.74V9.93H5.06v8.57h2.8z" />
+                </svg>
+              </a>
+
+              {/* X / Twitter */}
+              <a
+                href="https://x.com/agverse_tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
+                aria-label="X (Twitter)"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com/agverse.ae"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
+                aria-label="Instagram"
+              >
+                <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href="https://facebook.com/agverse.ae"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
+                aria-label="Facebook"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5c0-.988.243-1.49 1.348-1.49h2.652V2.14S15.426 2 13.926 2c-3.197 0-5.128 1.954-5.128 5.5v2.01H6v3.98h2.8v8.01z" />
+                </svg>
+              </a>
+            </div>
+
             <button
-              onClick={onOpenAudit}
-              className="ag-btn-solid w-full text-xs py-3 font-bold uppercase tracking-wider"
+              onClick={scrollToTop}
+              className="inline-flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-[#8BC34A] transition-colors"
+              aria-label="Back to top"
             >
-              Request a Tech Audit
+              <span>Back to Top</span>
+              <ArrowUp className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-mono">
-          <p>© 2026 AGverse. All Rights Reserved.</p>
-
-          <div className="flex items-center gap-4">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 rounded-lg bg-[#06201D] border border-[#ACD5D1]/15 flex items-center justify-center text-[#ACD5D1] hover:bg-[#ACD5D1] hover:text-[#021312] transition-colors"
-              aria-label="Facebook"
+        {/* Bottom Tier */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-4">
+          <div>{t.footer.copyright}</div>
+          <div className="flex items-center gap-6">
+            <button
+              onClick={onOpenPrivacy}
+              className="hover:text-white transition-colors underline-offset-4 hover:underline"
             >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 320 512">
-                <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z" />
-              </svg>
-            </a>
-
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 rounded-lg bg-[#06201D] border border-[#ACD5D1]/15 flex items-center justify-center text-[#ACD5D1] hover:bg-[#ACD5D1] hover:text-[#021312] transition-colors"
-              aria-label="Twitter"
+              {t.footer.privacy}
+            </button>
+            <button
+              onClick={onOpenTerms}
+              className="hover:text-white transition-colors underline-offset-4 hover:underline"
             >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 512 512">
-                <path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z" />
-              </svg>
-            </a>
-
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 rounded-lg bg-[#06201D] border border-[#ACD5D1]/15 flex items-center justify-center text-[#ACD5D1] hover:bg-[#ACD5D1] hover:text-[#021312] transition-colors"
-              aria-label="LinkedIn"
-            >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 448 512">
-                <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-              </svg>
-            </a>
+              {t.footer.terms}
+            </button>
+            <span>Dubai Silicon Oasis · UAE</span>
           </div>
         </div>
       </div>

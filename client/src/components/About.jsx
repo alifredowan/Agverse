@@ -1,147 +1,154 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Target, Brain, TrendingUp, Compass, Check } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Target, BarChart3, Zap, ArrowUpRight } from 'lucide-react';
 
-export default function About() {
+function Counter({ targetValue, duration = 2 }) {
   const [count, setCount] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const counterRef = useRef(null);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-          let start = 0;
-          const end = 10;
-          const duration = 1600;
-          const stepTime = Math.floor(duration / end);
-          const timer = setInterval(() => {
-            start += 1;
-            setCount(start);
-            if (start >= end) clearInterval(timer);
-          }, stepTime);
-        }
-      },
-      { threshold: 0.25 }
-    );
+    if (!isInView) return;
 
-    if (counterRef.current) observer.observe(counterRef.current);
-    return () => observer.disconnect();
-  }, [hasAnimated]);
+    let start = 0;
+    const end = parseInt(targetValue, 10);
+    if (isNaN(end)) return;
 
-  const pillars = [
-    {
-      icon: Target,
-      tag: 'Closed-Loop Sensing',
-      title: 'Precision Farming',
-      desc: 'Every seed is monitored. Every drop of water is calculated.',
-      metric: 'Single-seed granularity'
-    },
-    {
-      icon: Brain,
-      tag: 'Predictive Agronomy',
-      title: 'Data-Driven Decisions',
-      desc: 'Our AI predicts the future of the harvest before the first sprout appears.',
-      metric: 'Sub-soil moisture telemetry'
-    },
-    {
-      icon: TrendingUp,
-      tag: 'Ecosystem Scaling',
-      title: 'Maximum Efficiency',
-      desc: 'Scaling food production at 10x the traditional speed.',
-      metric: '10x growth acceleration'
-    }
+    const totalSteps = 60;
+    const stepTime = (duration * 1000) / totalSteps;
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / totalSteps;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + (end - start) * easeOut);
+      setCount(current);
+
+      if (currentStep >= totalSteps) {
+        clearInterval(timer);
+        setCount(end);
+      }
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, [isInView, targetValue, duration]);
+
+  return <span ref={ref}>{count}</span>;
+}
+
+export default function About({ t }) {
+  const icons = [
+    <Target className="w-6 h-6 text-[#8BC34A]" />,
+    <BarChart3 className="w-6 h-6 text-[#8BC34A]" />,
+    <Zap className="w-6 h-6 text-[#8BC34A]" />
   ];
 
   return (
-    <section id="about" className="relative py-28 sm:py-36 bg-[#021312] border-t border-[#ACD5D1]/10 overflow-hidden">
-      {/* Background imagery with subtle organic texture */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity pointer-events-none"
-        style={{ backgroundImage: "url('/assets/about-img.jpeg')" }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#021312] via-[#021312]/90 to-[#021312]" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8">
-        {/* Editorial Heading without generic kicker badge */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-20 items-end">
-          <div className="lg:col-span-7">
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
-              <span className="block font-manrope font-extrabold text-white">
-                One Platform.
-              </span>
-              <span className="block font-marcellus font-normal text-[#ACD5D1]">
-                Infinite Growth.
-              </span>
-            </h2>
-          </div>
-
-          <div className="lg:col-span-5">
-            <p className="text-base sm:text-lg text-[#96B1AC] leading-relaxed">
-              AGverse is more than a farm; it is a mega-platform. We bridge the gap between advanced technology and nature to solve the global food crisis. By combining real-time data with autonomous hardware, we ensure maximum yield with minimum environmental impact.
-            </p>
-          </div>
+    <section
+      id="about"
+      aria-labelledby="about-heading"
+      className="section-padding bg-[#F5F1E8] dark:bg-[#0B3D2E] transition-colors duration-300"
+    >
+      <div className="section-container">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="inline-block text-xs font-bold uppercase tracking-wider text-[#0B3D2E] dark:text-[#8BC34A] mb-3"
+          >
+            {t.about.title}
+          </motion.div>
+          <motion.h2
+            id="about-heading"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="font-heading font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#14201B] dark:text-white tracking-tight leading-tight"
+          >
+            {t.about.title}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mt-4 text-base sm:text-lg text-[#14201B]/80 dark:text-white/80 leading-relaxed"
+          >
+            {t.about.subtitle}
+          </motion.p>
         </div>
 
-        {/* Asymmetric Triad Layout - Breaking the 3 identical cards rut */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
-          {pillars.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                className="ag-field-surface rounded-2xl p-8 flex flex-col justify-between group"
+        {/* Content Grid: 3 Feature Cards + Highlight Stat Banner */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* 3 Feature Cards (8 Cols on Desktop) */}
+          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {t.about.cards.map((card, idx) => (
+              <motion.div
+                key={card.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="ag-card flex flex-col justify-between group bg-white dark:bg-[#14201B]"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="w-12 h-12 rounded-xl bg-[#0B2D29] border border-[#ACD5D1]/25 flex items-center justify-center text-[#ACD5D1] group-hover:bg-[#ACD5D1] group-hover:text-[#021312] transition-colors duration-300">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#96B1AC] border-b border-[#ACD5D1]/20 pb-0.5">
-                      {item.tag}
-                    </span>
+                  <div className="w-12 h-12 rounded-xl bg-[#0B3D2E]/10 dark:bg-[#8BC34A]/10 flex items-center justify-center mb-6 border border-[#0B3D2E]/15 dark:border-[#8BC34A]/20 group-hover:scale-105 transition-transform">
+                    {icons[idx]}
                   </div>
-
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#ACD5D1] transition-colors">
-                    {item.title}
+                  <h3 className="font-heading font-bold text-lg text-[#14201B] dark:text-white mb-2.5">
+                    {card.title}
                   </h3>
-
-                  <p className="text-sm text-[#96B1AC] leading-relaxed">
-                    {item.desc}
+                  <p className="text-sm text-[#14201B]/70 dark:text-white/70 leading-relaxed">
+                    {card.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-8 border-t border-[#ACD5D1]/10 flex items-center gap-2 text-xs text-[#ACD5D1] font-mono">
-                  <Check className="w-3.5 h-3.5 text-[#2CC56F]" />
-                  <span>{item.metric}</span>
+                <div className="mt-6 pt-4 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#0B3D2E] dark:text-[#8BC34A]">
+                  <span>Pillar 0{idx + 1}</span>
+                  <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              </motion.div>
+            ))}
+          </div>
 
-        {/* Integrated Agronomic Benchmark Instrument */}
-        <div
-          ref={counterRef}
-          className="rounded-2xl bg-[#06201D] border border-[#ACD5D1]/25 p-8 sm:p-12 shadow-2xl relative overflow-hidden"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-            <div className="lg:col-span-5 text-center lg:text-left flex items-baseline justify-center lg:justify-start gap-2">
-              <span className="text-7xl sm:text-8xl lg:text-9xl font-black font-manrope text-[#ACD5D1] tracking-tight">
-                {count}
-              </span>
-              <span className="text-4xl sm:text-5xl font-marcellus text-white">x</span>
+          {/* Highlight Stat Beside Cards (4 Cols on Desktop) */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="lg:col-span-4 rounded-2xl bg-[#0B3D2E] text-white p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden shadow-xl border border-[#8BC34A]/25"
+          >
+            {/* Background Accent Graphics */}
+            <div className="absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-[#8BC34A]/10 blur-2xl pointer-events-none" />
+            <div className="absolute top-4 right-4 text-xs font-mono uppercase tracking-widest text-[#8BC34A]/70 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
+              Benchmark
             </div>
 
-            <div className="lg:col-span-7 space-y-2 text-center lg:text-left">
-              <h3 className="text-xl sm:text-2xl font-bold text-white font-manrope">
-                Faster than traditional farming methods
-              </h3>
-              <p className="text-sm sm:text-base text-[#96B1AC] max-w-xl leading-relaxed">
-                Autonomous robotic field orchestration and real-time AI simulations compress crop testing and production cycles from seasonal cycles into continuous automated flows.
+            <div>
+              <div className="text-xs uppercase font-semibold text-[#8BC34A] tracking-wider mb-4">
+                Field Acceleration
+              </div>
+              <div className="flex items-baseline font-heading font-extrabold text-7xl sm:text-8xl text-white tracking-tighter">
+                <Counter targetValue={10} duration={1.8} />
+                <span className="text-[#8BC34A]">x</span>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/15">
+              <p className="text-base sm:text-lg font-medium text-white/90 leading-snug">
+                {t.about.statLabel}
+              </p>
+              <p className="text-xs text-white/60 mt-2">
+                Derived from closed-loop automated sensing vs traditional manual sampling cycles in desert pilots.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

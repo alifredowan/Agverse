@@ -1,93 +1,118 @@
-import React from 'react';
-import { Flame, Droplets, Eye, Leaf } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
-export default function Statistics() {
-  const benchmarks = [
-    {
-      metric: '10x',
-      title: 'Faster Simulation & Breeding',
-      description: 'Faster Crop Simulation & Breeding.',
-      subtext: 'Virtual climate stress testing reduces physical multi-year crop trials into weeks.',
-      icon: Flame,
-      color: 'text-[#E2C99A]'
-    },
-    {
-      metric: 'ZERO',
-      title: 'Waste Irrigation Systems',
-      description: 'Waste Irrigation Systems.',
-      subtext: 'Targeted sub-surface moisture delivery eliminates surface runoff and evaporative waste.',
-      icon: Droplets,
-      color: 'text-[#ACD5D1]'
-    },
-    {
-      metric: '24/7',
-      title: 'Autonomous Robotics Monitoring',
-      description: 'Autonomous Robotics Monitoring.',
-      subtext: 'Uninterrupted diurnal and nocturnal field inspection with solar battery reserves.',
-      icon: Eye,
-      color: 'text-white'
-    },
-    {
-      metric: 'NET-ZERO',
-      title: 'Carbon Goal for 2030',
-      description: 'Carbon Goal for 2030.',
-      subtext: 'Full transition to electric autonomous implements aligned with UAE Net Zero 2050.',
-      icon: Leaf,
-      color: 'text-[#2CC56F]'
-    }
-  ];
+function AnimatedCounter({ endValue, duration = 2 }) {
+  const [value, setValue] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-40px' });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    let start = 0;
+    const end = parseInt(endValue, 10);
+    if (isNaN(end)) return;
+
+    const totalSteps = 60;
+    const stepTime = (duration * 1000) / totalSteps;
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / totalSteps;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + (end - start) * easeOut);
+      setValue(current);
+
+      if (currentStep >= totalSteps) {
+        clearInterval(timer);
+        setValue(end);
+      }
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, [isInView, endValue, duration]);
+
+  return <span ref={ref}>{value}</span>;
+}
+
+export default function Statistics({ t }) {
+  const stats = t.stats.items;
 
   return (
-    <section className="relative py-28 sm:py-36 bg-[#021312] border-t border-[#ACD5D1]/10 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8">
-        {/* Editorial Heading */}
-        <div className="max-w-3xl mb-16 sm:mb-20">
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
-            <span className="block font-manrope font-extrabold text-white">
-              The AGverse Advantage
-            </span>
-            <span className="block font-marcellus font-normal text-[#ACD5D1]">
-              by the Numbers
-            </span>
-          </h2>
-          <p className="text-base sm:text-lg text-[#96B1AC] leading-relaxed">
-            Quantifiable impact across yield velocity, water conservation, and resource circularity.
-          </p>
-        </div>
+    <section
+      aria-label="Key Performance Indicators"
+      className="py-16 bg-[#0B3D2E] text-white border-y border-white/10 relative overflow-hidden"
+    >
+      {/* Background glow lines */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none" />
 
-        {/* 4 Agronomic Metrics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benchmarks.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                className="ag-field-surface rounded-2xl p-8 flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="w-12 h-12 rounded-xl bg-[#0B2D29] border border-[#ACD5D1]/20 flex items-center justify-center text-[#ACD5D1] mb-6 group-hover:bg-[#ACD5D1] group-hover:text-[#021312] transition-colors duration-300">
-                    <Icon className="w-5 h-5" />
-                  </div>
+      <div className="section-container relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center">
+          {/* Stat 1: 10x */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center p-4"
+          >
+            <div className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight mb-2 flex items-baseline">
+              <AnimatedCounter endValue={10} duration={1.6} />
+              <span className="text-[#8BC34A]">x</span>
+            </div>
+            <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
+              {stats[0].label}
+            </p>
+          </motion.div>
 
-                  <div className={`text-4xl sm:text-5xl font-black font-manrope tracking-tight mb-2 ${item.color}`}>
-                    {item.metric}
-                  </div>
+          {/* Stat 2: Zero (Waste irrigation) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex flex-col items-center p-4"
+          >
+            <div className="font-heading font-extrabold text-4xl sm:text-6xl text-[#8BC34A] tracking-tight mb-2">
+              {stats[1].display || 'Zero'}
+            </div>
+            <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
+              {stats[1].label}
+            </p>
+          </motion.div>
 
-                  <h3 className="text-base font-bold text-white font-manrope mb-2">
-                    {item.title}
-                  </h3>
+          {/* Stat 3: 24/7 (Autonomous Monitoring) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col items-center p-4"
+          >
+            <div className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight mb-2">
+              {stats[2].display || '24/7'}
+            </div>
+            <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
+              {stats[2].label}
+            </p>
+          </motion.div>
 
-                  <p className="text-xs text-[#96B1AC] leading-relaxed">
-                    {item.subtext}
-                  </p>
-                </div>
-
-                <div className="pt-6 mt-6 border-t border-[#ACD5D1]/10 text-[11px] font-mono text-[#ACD5D1]">
-                  {item.description}
-                </div>
-              </div>
-            );
-          })}
+          {/* Stat 4: 2030 (Net-zero target) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col items-center p-4"
+          >
+            <div className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight mb-2">
+              <AnimatedCounter endValue={2030} duration={2} />
+            </div>
+            <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
+              {stats[3].label}
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>

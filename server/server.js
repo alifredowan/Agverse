@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const auditRoutes = require('./routes/audit');
 const contentRoutes = require('./routes/content');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // API Routes
+app.use('/api/contact', contactRoutes);
 app.use('/api/audit-request', auditRoutes);
 app.use('/api/content', contentRoutes);
 

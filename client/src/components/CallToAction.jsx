@@ -1,54 +1,62 @@
 import React from 'react';
-import { ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 
-export default function CallToAction({ onOpenAudit }) {
+export default function CallToAction({ t, onSelectInterest }) {
+  const handleClick = () => {
+    if (onSelectInterest) {
+      onSelectInterest('Tech Audit');
+    }
+  };
+
   return (
-    <section className="relative py-32 sm:py-40 overflow-hidden">
-      {/* Background imagery */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/assets/Guess.jpeg')" }}
-      >
-        <div className="absolute inset-0 bg-[#021312]/85" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#021312] via-transparent to-[#021312]" />
-      </div>
+    <section
+      aria-label="Call to Action"
+      className="py-20 sm:py-24 bg-gradient-to-r from-[#0B3D2E] via-[#0E4434] to-[#0B3D2E] text-white relative overflow-hidden"
+    >
+      {/* Decorative background grid and glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(#8BC34A_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-[#8BC34A]/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-[#8BC34A]/20 blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 text-center flex flex-col items-center">
-        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-tight">
-          <span className="block font-manrope font-extrabold text-white">
-            Stop Guessing.
-          </span>
-          <span className="block font-marcellus font-normal text-[#ACD5D1] mt-1">
-            Start Growing with 100% Certainty.
-          </span>
-        </h2>
+      <div className="section-container relative z-10 text-center max-w-4xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="font-heading font-extrabold text-3xl sm:text-5xl md:text-6xl text-white tracking-tight leading-tight"
+        >
+          {t.ctaBanner.headline}
+        </motion.h2>
 
-        <p className="text-base sm:text-xl text-[#D4EBE9] max-w-2xl leading-relaxed mb-10 font-normal">
-          Don’t let climate volatility dictate your harvest. Bring the AGverse Mega-Platform to your land and watch your efficiency skyrocket.
-        </p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-6 text-base sm:text-xl text-white/80 max-w-2xl mx-auto font-normal leading-relaxed"
+        >
+          {t.ctaBanner.subtitle}
+        </motion.p>
 
-        {/* Action Button */}
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          <button
-            onClick={onOpenAudit}
-            className="ag-btn-solid text-sm font-bold uppercase tracking-wider px-9 py-4 group"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <a
+            href="#contact"
+            onClick={handleClick}
+            className="btn-primary text-base !py-4 !px-9 gap-2 group shadow-glow-lime"
           >
-            <span>Request a Tech Audit For Your Farm</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-          </button>
-        </div>
-
-        {/* Reassurance points */}
-        <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-xs text-[#96B1AC] font-mono">
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-[#2CC56F]" />
-            <span>Complimentary Engineering Assessment</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-[#ACD5D1]" />
-            <span>Direct Site Visit by UAE Agronomists</span>
-          </div>
-        </div>
+            <ShieldCheck className="w-5 h-5 text-[#0B3D2E]" />
+            <span>{t.ctaBanner.button}</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </a>
+        </motion.div>
       </div>
     </section>
   );

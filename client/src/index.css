@@ -2,99 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #0B3D2E;
+  --color-accent: #8BC34A;
+  --color-accent-hover: #9CCC65;
+  --color-sand: #F5F1E8;
+  --color-charcoal: #14201B;
+  --color-white: #FFFFFF;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
-    color-scheme: dark;
-    background-color: #021312;
   }
 
   body {
-    background-color: #021312;
-    color: #F3F7F6;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--color-sand);
+    color: var(--color-charcoal);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
-  ::selection {
-    background-color: #ACD5D1;
-    color: #021312;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', 'Poppins', sans-serif;
   }
 
-  /* Browser surface styling */
+  /* RTL Arabic Typography */
+  [dir="rtl"] {
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 {
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  ::selection {
+    background-color: #8BC34A;
+    color: #0B3D2E;
+  }
+
+  /* Accessibility focus ring */
+  :focus-visible {
+    outline: 2px solid #8BC34A;
+    outline-offset: 3px;
+  }
+
+  /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #021312;
+    background: #F5F1E8;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: #0B3D2E;
   }
   ::-webkit-scrollbar-thumb {
-    background: #0B2D29;
-    border-radius: 3px;
+    background: #8BC34A;
+    border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #ACD5D1;
-  }
-
-  :focus-visible {
-    outline: 2px solid #ACD5D1;
-    outline-offset: 2px;
+    background: #9CCC65;
   }
 }
 
-/* Tactile craft utilities */
-.ag-field-surface {
-  background: #06201D;
-  border: 1px solid rgba(172, 213, 209, 0.15);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.ag-field-surface:hover {
-  border-color: rgba(172, 213, 209, 0.4);
-  background: #092824;
-}
+/* Common UI Components */
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide bg-[#8BC34A] text-[#0B3D2E] transition-all duration-300 hover:bg-[#9CCC65] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#8BC34A]/25 active:translate-y-0 focus-visible:ring-2 focus-visible:ring-[#8BC34A] focus-visible:ring-offset-2;
+  }
 
-.ag-btn-solid {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  background-color: #ACD5D1;
-  color: #021312;
-  font-weight: 600;
-  padding: 0.85rem 1.6rem;
-  border-radius: 9999px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide border-2 border-[#0B3D2E] text-[#0B3D2E] bg-transparent transition-all duration-300 hover:bg-[#0B3D2E] hover:text-[#F5F1E8] hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 dark:border-[#8BC34A] dark:text-[#8BC34A] dark:hover:bg-[#8BC34A] dark:hover:text-[#0B3D2E];
+  }
 
-.ag-btn-solid:hover {
-  background-color: #C2E7E4;
-  transform: translateY(-1px);
-}
+  .btn-outline-white {
+    @apply inline-flex items-center justify-center px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide border-2 border-white/60 text-white bg-transparent transition-all duration-300 hover:border-white hover:bg-white/10 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0;
+  }
 
-.ag-btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  background-color: transparent;
-  color: #F3F7F6;
-  font-weight: 500;
-  padding: 0.85rem 1.6rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(172, 213, 209, 0.25);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  /* Cards */
+  .ag-card {
+    @apply bg-white dark:bg-charcoal-card rounded-2xl p-8 border border-black/5 dark:border-white/10 shadow-soft dark:shadow-soft-dark transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
 
-.ag-btn-ghost:hover {
-  background-color: #0A2B27;
-  border-color: #ACD5D1;
-  color: #ACD5D1;
-}
+  .ag-card-sand {
+    @apply bg-sand-surface dark:bg-forest-card rounded-2xl p-8 border border-black/5 dark:border-white/10 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
 
-/* Subtle terrain line texture */
-.bg-topo-subtle {
-  background-image: radial-gradient(rgba(172, 213, 209, 0.08) 1px, transparent 0);
-  background-size: 24px 24px;
+  /* Section Layout */
+  .section-container {
+    @apply max-w-content mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
 }
