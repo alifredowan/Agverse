@@ -1,3 +1,4 @@
+import { safeLink } from './CmsMedia';
 import React from 'react';
 import { Globe, ArrowUp } from 'lucide-react';
 
@@ -6,15 +7,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navLinks = [
-    { label: t.nav.about, href: '#about' },
-    { label: t.nav.technology, href: '#technology' },
-    { label: t.nav.sustainability, href: '#sustainability' },
-    { label: t.nav.roi, href: '#roi' },
-    { label: t.nav.proof, href: '#case-studies' },
-    { label: t.nav.faq, href: '#faq' },
-    { label: t.nav.contact, href: '#contact' },
-  ];
+  const navLinks = t.footer.links;
 
   return (
     <footer className="bg-[#0D1512] text-white/80 pt-16 pb-12 border-t border-white/10">
@@ -24,12 +17,12 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
           {/* Logo & Tagline (5 cols) */}
           <div className="md:col-span-5">
             <a
-              href="#home"
+              href={t.homeHref}
               className="inline-flex items-center gap-2.5 mb-4 group"
-              aria-label="AGverse Home"
+              aria-label={t.brand}
             >
               <div className="w-8 h-8 rounded-full bg-[#0B3D2E] flex items-center justify-center p-1.5 border border-[#8BC34A]/40 shadow-sm">
-                <svg
+                {safeLink(t.logo) ? <img src={safeLink(t.logo)} alt={t.logoAlt} className="w-full h-full object-contain" /> : <svg
                   viewBox="0 0 40 40"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -47,10 +40,10 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
-                </svg>
+                </svg>}
               </div>
               <span className="font-heading font-extrabold text-2xl tracking-tight text-white">
-                AG<span className="text-[#8BC34A]">verse</span>
+                {t.brand === "AGverse" ? <>AG<span className="text-[#8BC34A]">verse</span></> : t.brand}
               </span>
             </a>
 
@@ -66,13 +59,13 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
           {/* Nav links (4 cols) */}
           <div className="md:col-span-4">
             <div className="text-xs font-mono uppercase tracking-wider text-[#8BC34A] font-semibold mb-4">
-              Navigation
+              {t.footer.navigationLabel}
             </div>
             <ul className="grid grid-cols-2 gap-2 text-sm">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
-                    href={link.href}
+                    href={safeLink(link.href?.startsWith("#") && t.homeHref.startsWith("/") ? "/" + link.href : link.href)}
                     className="hover:text-[#8BC34A] transition-colors py-1 inline-block"
                   >
                     {link.label}
@@ -87,7 +80,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
             <div className="flex items-center gap-3 mb-6">
               {/* LinkedIn */}
               <a
-                href="https://linkedin.com/company/agverse-tech"
+                href={safeLink(t.footer.linkedin)} hidden={!safeLink(t.footer.linkedin)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
@@ -100,7 +93,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
 
               {/* X / Twitter */}
               <a
-                href="https://x.com/agverse_tech"
+                href={safeLink(t.footer.x)} hidden={!safeLink(t.footer.x)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
@@ -113,7 +106,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
 
               {/* Instagram */}
               <a
-                href="https://instagram.com/agverse.ae"
+                href={safeLink(t.footer.instagram)} hidden={!safeLink(t.footer.instagram)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
@@ -128,7 +121,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
 
               {/* Facebook */}
               <a
-                href="https://facebook.com/agverse.ae"
+                href={safeLink(t.footer.facebook)} hidden={!safeLink(t.footer.facebook)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#8BC34A] hover:text-[#0B3D2E] flex items-center justify-center transition-colors border border-white/10"
@@ -145,7 +138,7 @@ export default function Footer({ t, onOpenPrivacy, onOpenTerms }) {
               className="inline-flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-[#8BC34A] transition-colors"
               aria-label="Back to top"
             >
-              <span>Back to Top</span>
+              <span>{t.footer.backToTop}</span>
               <ArrowUp className="w-4 h-4" />
             </button>
           </div>

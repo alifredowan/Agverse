@@ -18,10 +18,22 @@ const clientProcess = spawn('npm', ['run', 'dev', '--prefix', 'client'], {
   shell: true
 });
 
+const cmsProcess = spawn('php', [
+  '-d', 'upload_max_filesize=50M', '-d', 'post_max_size=52M',
+  '-S', '127.0.0.1:8000', path.resolve(__dirname, 'backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php'),
+], {
+  cwd: path.join(__dirname, 'backend', 'public'),
+  stdio: 'inherit',
+  shell: process.platform === 'win32',
+});
+
+cmsProcess.on('error', (error) => console.error(`Could not start Laravel: ${error.message}`));
+
 const cleanup = () => {
   console.log('\nStopping servers...');
   serverProcess.kill();
   clientProcess.kill();
+  cmsProcess.kill();
   process.exit(0);
 };
 

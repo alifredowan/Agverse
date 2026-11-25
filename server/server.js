@@ -7,6 +7,7 @@ require('dotenv').config();
 const auditRoutes = require('./routes/audit');
 const contentRoutes = require('./routes/content');
 const contactRoutes = require('./routes/contact');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -20,6 +21,7 @@ app.use(morgan('dev'));
 app.use('/api/contact', contactRoutes);
 app.use('/api/audit-request', auditRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

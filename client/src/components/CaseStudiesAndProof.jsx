@@ -3,12 +3,7 @@ import { motion } from 'framer-motion';
 import { Award, CheckCircle, ShieldCheck, ExternalLink } from 'lucide-react';
 
 export default function CaseStudiesAndProof({ t }) {
-  const certifications = [
-    { label: 'UAE National Food Security Strategy 2051', sub: 'Technology Alignment' },
-    { label: 'Global G.A.P. Compliant', sub: 'Farm Traceability Standard' },
-    { label: 'ISO 14001 Certified', sub: 'Environmental Management' },
-    { label: 'Solar Impulse Efficient Solution', sub: 'Clean Tech Endorsement' },
-  ];
+  const certifications = t.caseStudies.certifications;
 
   return (
     <section
@@ -47,7 +42,7 @@ export default function CaseStudiesAndProof({ t }) {
                     UAE Commercial Trial 0{idx + 1}
                   </span>
                   <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#8BC34A]/20 text-[#0B3D2E] dark:text-[#8BC34A]">
-                    Verified
+                    {t.caseStudies.verified}
                   </span>
                 </div>
 
@@ -66,7 +61,7 @@ export default function CaseStudiesAndProof({ t }) {
 
               <div className="mt-6 pt-4 border-t border-black/5 dark:border-white/10 flex items-center gap-2 text-xs text-[#0B3D2E] dark:text-[#8BC34A] font-semibold">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Audited telemetry logs & satellite verification</span>
+                <span>{t.caseStudies.evidence}</span>
               </div>
             </div>
           ))}
@@ -75,7 +70,7 @@ export default function CaseStudiesAndProof({ t }) {
         {/* Certifications and Compliance Banner */}
         <div className="bg-sand-surface dark:bg-[#06251C] rounded-2xl p-6 sm:p-8 border border-black/5 dark:border-white/10">
           <div className="text-xs font-mono uppercase tracking-wider text-[#14201B]/60 dark:text-white/60 mb-6 text-center font-semibold">
-            Institutional Standards & Enterprise Certifications
+            {t.caseStudies.standards}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             {certifications.map((cert, idx) => (

@@ -4,22 +4,16 @@ import { Calculator, ArrowRight, Droplets, Clock, TrendingUp, DollarSign } from 
 
 export default function RoiCalculator({ t, onSelectInterest }) {
   const [hectares, setHectares] = useState(50);
-  const [cropType, setCropType] = useState('dates');
+  const [cropType, setCropType] = useState(t.roi.cropOptions[0].id);
   const [waterCost, setWaterCost] = useState(120000);
   const farmAreaInputId = useId();
   const cropCategoryInputId = useId();
 
   // Dynamic calculations based on inputs
-  const cropMultipliers = {
-    dates: { waterSavingPct: 0.82, laborHoursPerHa: 42, yieldGain: 24, paybackMonths: 13 },
-    greenhouse: { waterSavingPct: 0.90, laborHoursPerHa: 85, yieldGain: 34, paybackMonths: 10 },
-    citrus: { waterSavingPct: 0.78, laborHoursPerHa: 36, yieldGain: 22, paybackMonths: 15 },
-    fodder: { waterSavingPct: 0.85, laborHoursPerHa: 28, yieldGain: 19, paybackMonths: 14 },
-  };
-
-  const selectedCrop = cropMultipliers[cropType] || cropMultipliers.dates;
+  const cropOptions = t.roi.cropOptions;
+  const selectedCrop = cropOptions.find((crop) => crop.id === cropType) || cropOptions[0];
   const estimatedWaterSavedAED = Math.round(waterCost * selectedCrop.waterSavingPct);
-  const estimatedWaterVolumeLiters = Math.round(hectares * 18500 * (selectedCrop.waterSavingPct * 100));
+  const estimatedWaterVolumeLiters = Math.round(hectares * t.roi.waterLitersFactor * (selectedCrop.waterSavingPct * 100));
   const automatedLaborHours = Math.round(hectares * selectedCrop.laborHoursPerHa);
   const projectedYieldGain = selectedCrop.yieldGain;
   const paybackPeriod = selectedCrop.paybackMonths;
@@ -59,7 +53,7 @@ export default function RoiCalculator({ t, onSelectInterest }) {
           {/* Controls Column (5 cols) */}
           <div className="lg:col-span-5 bg-white dark:bg-[#14201B] p-6 sm:p-8 rounded-2xl border border-black/5 dark:border-white/10 shadow-soft">
             <h3 className="font-heading font-bold text-xl text-[#14201B] dark:text-white mb-6">
-              Farm Parameters
+              {t.roi.parametersTitle}
             </h3>
 
             {/* Farm Area Slider */}
@@ -84,9 +78,9 @@ export default function RoiCalculator({ t, onSelectInterest }) {
                 className="w-full accent-[#8BC34A] cursor-pointer"
               />
               <div className="flex justify-between text-[11px] text-[#14201B]/50 dark:text-white/50 mt-1">
-                <span>10 ha (Pilot)</span>
-                <span>250 ha</span>
-                <span>500+ ha (Commercial)</span>
+                <span>{t.roi.pilotRange}</span>
+                <span>{t.roi.middleRange}</span>
+                <span>{t.roi.commercialRange}</span>
               </div>
             </div>
 
@@ -97,15 +91,12 @@ export default function RoiCalculator({ t, onSelectInterest }) {
               </label>
               <select
                 id={cropCategoryInputId}
-                value={cropType}
+                value={selectedCrop.id}
                 onChange={(e) => setCropType(e.target.value)}
                 aria-label={t.roi.cropType}
                 className="w-full px-4 py-3 rounded-xl bg-sand-light dark:bg-[#0B3D2E] text-[#14201B] dark:text-white border border-black/10 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#8BC34A]"
               >
-                <option value="dates">{t.roi.crops.dates}</option>
-                <option value="greenhouse">{t.roi.crops.greenhouse}</option>
-                <option value="citrus">{t.roi.crops.citrus}</option>
-                <option value="fodder">{t.roi.crops.fodder}</option>
+                {cropOptions.map((crop) => <option key={crop.id} value={crop.id}>{crop.label}</option>)}
               </select>
             </div>
 
@@ -138,9 +129,9 @@ export default function RoiCalculator({ t, onSelectInterest }) {
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
                 <span className="text-xs font-mono uppercase tracking-wider text-[#8BC34A]">
-                  Live Yield & Savings Projections
+                  {t.roi.projections}
                 </span>
-                <span className="text-xs text-white/60">Based on pilot data</span>
+                <span className="text-xs text-white/60">{t.roi.pilotData}</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -168,7 +159,7 @@ export default function RoiCalculator({ t, onSelectInterest }) {
                     {automatedLaborHours.toLocaleString()} hrs
                   </div>
                   <span className="text-[11px] text-white/60">
-                    Autonomous laser weeding & scouting
+                    {t.roi.laborDetail}
                   </span>
                 </div>
 
@@ -182,7 +173,7 @@ export default function RoiCalculator({ t, onSelectInterest }) {
                     +{projectedYieldGain}%
                   </div>
                   <span className="text-[11px] text-white/60">
-                    Higher grade harvest classification
+                    {t.roi.yieldDetail}
                   </span>
                 </div>
 
@@ -196,7 +187,7 @@ export default function RoiCalculator({ t, onSelectInterest }) {
                     ~{paybackPeriod} Months
                   </div>
                   <span className="text-[11px] text-white/60">
-                    Fast capital amortization
+                    {t.roi.paybackDetail}
                   </span>
                 </div>
               </div>
@@ -204,7 +195,7 @@ export default function RoiCalculator({ t, onSelectInterest }) {
 
             <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs text-white/70 max-w-sm">
-                Projections calibrated against UAE pilot conditions and regional electricity/water tariffs.
+                {t.roi.assumptionsDetail}
               </p>
               <a
                 href="#contact"

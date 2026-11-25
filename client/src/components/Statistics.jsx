@@ -58,8 +58,8 @@ export default function Statistics({ t }) {
             className="flex flex-col items-center p-4"
           >
             <div className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight mb-2 flex items-baseline">
-              <AnimatedCounter endValue={10} duration={1.6} />
-              <span className="text-[#8BC34A]">x</span>
+              <AnimatedCounter endValue={stats[0].value} duration={1.6} />
+              <span className="text-[#8BC34A]">{stats[0].suffix}</span>
             </div>
             <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
               {stats[0].label}
@@ -107,7 +107,7 @@ export default function Statistics({ t }) {
             className="flex flex-col items-center p-4"
           >
             <div className="font-heading font-extrabold text-4xl sm:text-6xl text-white tracking-tight mb-2">
-              <AnimatedCounter endValue={2030} duration={2} />
+              <AnimatedCounter endValue={stats[3].value} duration={2} />
             </div>
             <p className="text-xs sm:text-sm text-white/80 max-w-[200px] leading-snug">
               {stats[3].label}

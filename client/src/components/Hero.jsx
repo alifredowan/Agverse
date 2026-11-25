@@ -1,8 +1,9 @@
 import React from 'react';
+import CmsMedia, { safeLink } from './CmsMedia';
 import { motion } from 'framer-motion';
 import { ArrowDown, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
-export default function Hero({ t, onSelectInterest }) {
+export default function Hero({ t, lang, onSelectInterest }) {
   const handleAuditClick = () => {
     if (onSelectInterest) {
       onSelectInterest('Tech Audit');
@@ -24,8 +25,8 @@ export default function Hero({ t, onSelectInterest }) {
           className="w-full h-full"
         >
           <img
-            src="/images/hero-farm.jpg"
-            alt="Cinematic aerial view of AGverse monitored agricultural land"
+            src={safeLink(t.hero.image)}
+            alt={t.hero.alt}
             className="w-full h-full object-cover object-center"
             loading="eager"
           />
@@ -77,7 +78,7 @@ export default function Hero({ t, onSelectInterest }) {
         >
           {/* Primary CTA */}
           <a
-            href="#contact"
+            href={safeLink(t.hero.primaryHref, "#contact")}
             onClick={handleAuditClick}
             className="btn-primary w-full sm:w-auto gap-2 group text-base !py-4 !px-8 shadow-glow-lime"
           >
@@ -88,12 +89,13 @@ export default function Hero({ t, onSelectInterest }) {
 
           {/* Secondary CTA */}
           <a
-            href="#technology"
+            href={safeLink(t.hero.secondaryHref, "#technology")}
             className="btn-outline-white w-full sm:w-auto text-base !py-4 !px-8"
           >
             <span>{t.hero.secondaryCta}</span>
           </a>
         </motion.div>
+        <CmsMedia youtube={t.hero.youtube} mp4={t.hero.mp4} title={t.hero.title} buttonLabel={t.hero.videoLabel} youtubeLabel={lang === "ar" ? "شاهد على يوتيوب" : "Watch on YouTube"} />
       </div>
 
       {/* Scroll Down Indicator */}
@@ -104,7 +106,7 @@ export default function Hero({ t, onSelectInterest }) {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/60 hover:text-white transition-colors"
       >
         <a
-          href="#about"
+          href={safeLink(t.hero.scrollHref, "#about")}
           className="flex flex-col items-center group focus:outline-none"
           aria-label={t.hero.scrollDown}
         >

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { safeLink } from './CmsMedia';
 import { motion } from 'framer-motion';
 import { Plane, Eye, Activity, MapPin, Zap } from 'lucide-react';
 
@@ -6,37 +7,13 @@ export default function DroneSimulator({ t }) {
   const [mode, setMode] = useState('ndvi'); // 'rgb' or 'ndvi'
   const [activeHotspot, setActiveHotspot] = useState(0);
 
-  const hotspots = [
-    {
-      id: 0,
-      x: '32%',
-      y: '38%',
-      label: 'Sector Alpha-3',
-      reading: 'NDVI 0.84 — Healthy Canopy',
-      action: 'Automated drip rate reduced 12%',
-    },
-    {
-      id: 1,
-      x: '68%',
-      y: '45%',
-      label: 'Sector Beta-7',
-      reading: 'NDVI 0.46 — Moisture Deficit',
-      action: 'Subsurface valve #14 pulsed for 15 mins',
-    },
-    {
-      id: 2,
-      x: '52%',
-      y: '70%',
-      label: 'Sector Gamma-1',
-      reading: 'Nitrogen Variance Detected',
-      action: 'Targeted micro-nutrient spray dispatched',
-    },
-  ];
+  const hotspots = t.ndviDemo.hotspots;
+  const active = hotspots.find((spot) => spot.id === activeHotspot) ?? hotspots[0];
 
   return (
     <section
       id="drone-sim"
-      aria-label="Interactive Drone Telemetry"
+      aria-label={t.ndviDemo.telemetryLabel}
       className="section-padding bg-[#14201B] text-white relative overflow-hidden"
     >
       <div className="section-container">
@@ -61,7 +38,7 @@ export default function DroneSimulator({ t }) {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#8BC34A] animate-pulse" />
               <span className="text-xs font-mono text-[#8BC34A] uppercase tracking-wider">
-                Live Flight Path: Drone Hive #02 (Al Ain Sector 4)
+                {t.ndviDemo.flightLabel}
               </span>
             </div>
 
@@ -96,8 +73,8 @@ export default function DroneSimulator({ t }) {
           <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded-xl overflow-hidden bg-black/50 border border-white/10 select-none">
             {/* Aerial Photography Layer */}
             <img
-              src="/images/hero-farm.jpg"
-              alt="Aerial view of surveyed farmland"
+              src={safeLink(t.ndviDemo.image)}
+              alt={t.ndviDemo.alt}
               className={`w-full h-full object-cover transition-all duration-700 ${
                 mode === 'ndvi' ? 'filter saturate-200 hue-rotate-60 contrast-125' : ''
               }`}
@@ -131,16 +108,16 @@ export default function DroneSimulator({ t }) {
             {/* Active Telemetry Overlay Card */}
             <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-md bg-[#0B3D2E]/90 backdrop-blur-md p-4 rounded-xl border border-[#8BC34A]/40 shadow-2xl z-30">
               <div className="flex items-center justify-between text-xs text-[#8BC34A] font-mono mb-1">
-                <span>{hotspots[activeHotspot].label}</span>
+                <span>{active?.label}</span>
                 <span className="flex items-center gap-1">
                   <Zap className="w-3 h-3 text-[#8BC34A]" /> AI Resolved
                 </span>
               </div>
               <div className="text-sm font-bold text-white mb-1">
-                {hotspots[activeHotspot].reading}
+                {active?.reading}
               </div>
               <div className="text-xs text-white/80">
-                Action: {hotspots[activeHotspot].action}
+                {t.ndviDemo.actionLabel} {active?.action}
               </div>
             </div>
           </div>

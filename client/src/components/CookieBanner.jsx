@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Check } from 'lucide-react';
 
-export default function CookieBanner({ onOpenPrivacy }) {
+export default function CookieBanner({ onOpenPrivacy, content }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -39,16 +39,16 @@ export default function CookieBanner({ onOpenPrivacy }) {
           </div>
           <div>
             <div className="font-heading font-bold text-sm text-white mb-1">
-              Privacy & Cookie Preferences
+              {content.title}
             </div>
             <p className="text-xs text-white/80 leading-relaxed mb-4">
-              We use telemetry and functional cookies to ensure reliable precision mapping and optimize regional site performance. Read our{' '}
+              {content.body}{' '}
               <button
                 type="button"
                 onClick={onOpenPrivacy}
                 className="text-[#8BC34A] underline hover:text-white"
               >
-                Privacy Policy
+                {content.privacy}
               </button>.
             </p>
 
@@ -58,14 +58,14 @@ export default function CookieBanner({ onOpenPrivacy }) {
                 onClick={acceptAll}
                 className="btn-primary text-xs !py-2 !px-4"
               >
-                Accept All
+                {content.acceptAll}
               </button>
               <button
                 type="button"
                 onClick={acceptNecessary}
                 className="btn-outline-white text-xs !py-2 !px-3"
               >
-                Essential Only
+                {content.essentialOnly}
               </button>
             </div>
           </div>

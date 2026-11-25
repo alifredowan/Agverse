@@ -88,7 +88,7 @@ export default function Sustainability({ t }) {
 
               <div className="mt-8 pt-4 border-t border-black/5 dark:border-white/10 text-xs font-mono text-[#14201B]/50 dark:text-white/50 flex items-center justify-between">
                 <span>Pillar 0{idx + 1}</span>
-                <span>Net-Zero 2030</span>
+                <span>{t.sustainability.targetLabel}</span>
               </div>
             </motion.div>
           ))}

@@ -1,8 +1,9 @@
+import { safeLink } from './CmsMedia';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Menu, X, Moon, Sun, ArrowRight, ShieldCheck } from 'lucide-react';
 
-export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudit }) {
+export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudit, solid, children }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -21,41 +22,36 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
     document.documentElement.lang = newLang;
   };
 
-  const navLinks = [
-    { label: t.nav.about, href: '#about' },
-    { label: t.nav.technology, href: '#technology' },
-    { label: t.nav.sustainability, href: '#sustainability' },
-    { label: t.nav.roi, href: '#roi' },
-    { label: t.nav.proof, href: '#case-studies' },
-    { label: t.nav.faq, href: '#faq' },
-  ];
+  const navLinks = t.nav.links;
 
   return (
     <>
       {/* Accessibility Skip Link */}
       <a
-        href="#about"
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-[#8BC34A] text-[#0B3D2E] font-bold rounded-lg shadow-lg"
       >
         {t.nav.skipToContent}
       </a>
 
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-[#0B3D2E]/90 dark:bg-[#06251C]/95 backdrop-blur-md shadow-lg py-3.5 border-b border-white/10'
-            : 'bg-transparent py-5 sm:py-6'
+        className={`${children ? 'sticky' : 'fixed'} top-0 inset-x-0 z-40 transition-colors duration-300 ${
+          children
+            ? 'bg-[#0B3D2E] dark:bg-[#06251C]'
+            : isScrolled || solid
+              ? 'bg-[#0B3D2E]/90 dark:bg-[#06251C]/95 backdrop-blur-md shadow-lg border-b border-white/10'
+              : 'bg-transparent'
         }`}
       >
-        <div className="section-container flex items-center justify-between">
+        <div className={`section-container flex items-center justify-between gap-3 ${children || isScrolled || solid ? 'py-3.5' : 'py-5 sm:py-6'}`}>
           {/* Logo */}
           <a
-            href="#home"
-            className="flex items-center gap-2.5 group focus-visible:ring-2 focus-visible:ring-[#8BC34A] rounded-full px-2 py-1"
-            aria-label="AGverse Home"
+            href={t.homeHref}
+            className="flex shrink-0 items-center gap-2.5 group focus-visible:ring-2 focus-visible:ring-[#8BC34A] rounded-full px-2 py-1"
+            aria-label={t.brand}
           >
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0B3D2E] to-[#135340] dark:from-[#135340] dark:to-[#8BC34A] flex items-center justify-center p-1.5 border border-[#8BC34A]/40 shadow-sm transition-transform group-hover:scale-105">
-              <svg
+              {safeLink(t.logo) ? <img src={safeLink(t.logo)} alt={t.logoAlt} className="w-full h-full object-contain" /> : <svg
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -73,21 +69,21 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
-              </svg>
+              </svg>}
             </div>
             <div className="flex flex-col">
               <span className="font-heading font-extrabold text-xl tracking-tight text-white flex items-center">
-                AG<span className="text-[#8BC34A]">verse</span>
+                {t.brand === "AGverse" ? <>AG<span className="text-[#8BC34A]">verse</span></> : t.brand}
               </span>
             </div>
           </a>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap lg:flex xl:gap-4 2xl:gap-7">
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={safeLink(link.href?.startsWith("#") && t.homeHref.startsWith("/") ? "/" + link.href : link.href)}
                 className="text-sm font-medium text-white/80 hover:text-[#8BC34A] transition-colors focus-visible:ring-1 focus-visible:ring-[#8BC34A] rounded px-1.5 py-0.5"
               >
                 {link.label}
@@ -96,7 +92,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden shrink-0 items-center gap-2 whitespace-nowrap lg:flex xl:gap-4">
             {/* Language Switcher */}
             <button
               onClick={toggleLang}
@@ -118,7 +114,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
 
             {/* Contact Us CTA Button */}
             <a
-              href="#contact"
+              href={t.homeHref.startsWith("/") ? "/#contact" : "#contact"}
               className="btn-primary text-xs !py-2.5 !px-5 gap-1.5"
             >
               <span>{t.nav.contact}</span>
@@ -153,6 +149,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
             </button>
           </div>
         </div>
+        {children}
       </header>
 
       {/* Mobile Slide-in Drawer */}
@@ -178,7 +175,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
               <div>
                 <div className="flex items-center justify-between pb-6 border-b border-white/10">
                   <span className="font-heading font-bold text-xl text-white flex items-center gap-2">
-                    AG<span className="text-[#8BC34A]">verse</span>
+                    {t.brand === "AGverse" ? <>AG<span className="text-[#8BC34A]">verse</span></> : t.brand}
                   </span>
                   <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -193,7 +190,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
                   {navLinks.map((link) => (
                     <a
                       key={link.href}
-                      href={link.href}
+                      href={safeLink(link.href?.startsWith("#") && t.homeHref.startsWith("/") ? "/" + link.href : link.href)}
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-lg font-medium text-white/90 hover:text-[#8BC34A] transition-colors py-1"
                     >
@@ -205,7 +202,7 @@ export default function Navbar({ lang, setLang, t, isDark, setIsDark, onOpenAudi
 
               <div className="pt-6 border-t border-white/10 flex flex-col gap-3">
                 <a
-                  href="#contact"
+                  href={t.homeHref.startsWith("/") ? "/#contact" : "#contact"}
                   onClick={() => setMobileMenuOpen(false)}
                   className="btn-primary w-full text-center"
                 >

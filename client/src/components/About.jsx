@@ -127,12 +127,12 @@ export default function About({ t }) {
             {/* Background Accent Graphics */}
             <div className="absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-[#8BC34A]/10 blur-2xl pointer-events-none" />
             <div className="absolute top-4 right-4 text-xs font-mono uppercase tracking-widest text-[#8BC34A]/70 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-              Benchmark
+              {t.about.benchmark}
             </div>
 
             <div>
               <div className="text-xs uppercase font-semibold text-[#8BC34A] tracking-wider mb-4">
-                Field Acceleration
+                {t.about.acceleration}
               </div>
               <div className="flex items-baseline font-heading font-extrabold text-7xl sm:text-8xl text-white tracking-tighter">
                 <Counter targetValue={10} duration={1.8} />
@@ -145,7 +145,7 @@ export default function About({ t }) {
                 {t.about.statLabel}
               </p>
               <p className="text-xs text-white/60 mt-2">
-                Derived from closed-loop automated sensing vs traditional manual sampling cycles in desert pilots.
+                {t.about.evidence}
               </p>
             </div>
           </motion.div>

@@ -2,31 +2,20 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar as CalendarIcon, Clock, CheckCircle2, User, Mail, Building, ArrowRight } from 'lucide-react';
 
-export default function AuditCalendarModal({ isOpen, onClose }) {
-  const [selectedDate, setSelectedDate] = useState('2026-11-24');
-  const [selectedTime, setSelectedTime] = useState('10:00 AM');
+export default function AuditCalendarModal({ isOpen, onClose, content }) {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isBooked, setIsBooked] = useState(false);
 
-  const availableDates = [
-    { day: 'Mon', date: '24 Nov', val: '2026-11-24' },
-    { day: 'Tue', date: '25 Nov', val: '2026-11-25' },
-    { day: 'Wed', date: '26 Nov', val: '2026-11-26' },
-    { day: 'Thu', date: '27 Nov', val: '2026-11-27' },
-  ];
-
-  const availableTimes = [
-    '09:00 AM',
-    '10:30 AM',
-    '01:00 PM',
-    '03:30 PM',
-    '05:00 PM',
-  ];
+  const { dates: availableDates, times: availableTimes } = content;
+  const date = availableDates.some((slot) => slot.val === selectedDate) ? selectedDate : availableDates[0]?.val;
+  const time = availableTimes.includes(selectedTime) ? selectedTime : availableTimes[0];
 
   const handleBooking = (e) => {
     e.preventDefault();
-    if (!name || !email) return;
+    if (!name || !email || !date || !time) return;
     setIsBooked(true);
   };
 
@@ -59,7 +48,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
           <div className="flex items-center gap-2">
             <CalendarIcon className="w-5 h-5 text-[#8BC34A]" />
             <h3 className="font-heading font-bold text-xl text-white">
-              Schedule Farm Tech Audit Call
+              {content.title}
             </h3>
           </div>
           <button
@@ -76,16 +65,16 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h4 className="font-heading font-bold text-2xl text-white mb-2">
-              Discovery Call Confirmed!
+              {content.confirmed}
             </h4>
             <p className="text-sm text-white/80 max-w-md mx-auto mb-6">
-              We have reserved <strong>{selectedTime}</strong> on <strong>{selectedDate}</strong> (GST Dubai Time). A calendar invitation with Google Meet link has been sent to <strong>{email}</strong>.
+              {content.confirmation.replace(/\{(time|date|email)\}/g, (_, key) => ({ time, date, email })[key])}
             </p>
             <button
               onClick={handleReset}
               className="btn-primary text-xs !py-3 !px-8"
             >
-              Done
+              {content.done}
             </button>
           </div>
         ) : (
@@ -93,7 +82,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
             {/* Date Selection */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-white/80 mb-2.5">
-                Select Date (Gulf Standard Time)
+                {content.dateLabel}
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {availableDates.map((item) => (
@@ -102,7 +91,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
                     type="button"
                     onClick={() => setSelectedDate(item.val)}
                     className={`p-3 rounded-xl border text-center transition-all ${
-                      selectedDate === item.val
+                      date === item.val
                         ? 'bg-[#8BC34A] text-[#0B3D2E] border-[#8BC34A] font-bold shadow-md'
                         : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
                     }`}
@@ -117,7 +106,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
             {/* Time Selection */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-white/80 mb-2.5">
-                Select Time Slot (30 Mins)
+                {content.timeLabel}
               </label>
               <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {availableTimes.map((slot) => (
@@ -126,7 +115,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
                     type="button"
                     onClick={() => setSelectedTime(slot)}
                     className={`py-2 px-1 rounded-lg border text-center text-xs transition-all ${
-                      selectedTime === slot
+                      time === slot
                         ? 'bg-[#8BC34A] text-[#0B3D2E] border-[#8BC34A] font-bold'
                         : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10'
                     }`}
@@ -141,28 +130,28 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div>
                 <label className="block text-xs font-semibold text-white/80 mb-1">
-                  Your Name *
+                  {content.nameLabel}
                 </label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Sultan Al Nuaimi"
+                  placeholder={content.namePlaceholder}
                   className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/15 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#8BC34A]"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-white/80 mb-1">
-                  Email Address *
+                  {content.emailLabel}
                 </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="sultan@agriholdings.ae"
+                  placeholder={content.emailPlaceholder}
                   className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/15 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#8BC34A]"
                 />
               </div>
@@ -173,7 +162,7 @@ export default function AuditCalendarModal({ isOpen, onClose }) {
                 type="submit"
                 className="btn-primary w-full text-sm !py-3.5 gap-2 shadow-glow-lime"
               >
-                <span>Confirm Call with Senior Agronomist</span>
+                <span>{content.submitLabel}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

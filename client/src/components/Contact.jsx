@@ -116,7 +116,7 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8BC34A] mb-3">
                 <ShieldCheck className="w-4 h-4 text-[#8BC34A]" />
-                <span>Get In Touch</span>
+                <span>{t.contact.eyebrow}</span>
               </div>
 
               <h2
@@ -147,7 +147,7 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-white">Direct Inquiries</div>
+                    <div className="font-bold text-white">{t.contact.inquiries}</div>
                     <a
                       href={`mailto:${t.contact.email}`}
                       className="text-xs text-[#8BC34A] hover:underline"
@@ -162,7 +162,7 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-white">Regional Office</div>
+                    <div className="font-bold text-white">{t.contact.office}</div>
                     <div className="text-xs text-white/60">{t.contact.phone}</div>
                   </div>
                 </div>
@@ -174,8 +174,8 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
               <div className="flex items-center gap-3">
                 <Calendar className="w-6 h-6 text-[#8BC34A]" />
                 <div className="text-xs">
-                  <div className="font-bold text-white">Need an expedited assessment?</div>
-                  <div className="text-white/60">Schedule a 30-min discovery session</div>
+                  <div className="font-bold text-white">{t.contact.expedited}</div>
+                  <div className="text-white/60">{t.contact.discovery}</div>
                 </div>
               </div>
               <button
@@ -183,7 +183,7 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
                 onClick={onOpenCalendar}
                 className="btn-outline-white text-xs !py-2 !px-4 shrink-0"
               >
-                Pick a Date
+                {t.contact.chooseDate}
               </button>
             </div>
           </div>
@@ -215,7 +215,7 @@ export default function Contact({ t, selectedInterest, onOpenCalendar }) {
                     onClick={() => setIsSuccess(false)}
                     className="btn-outline-white text-xs !py-2.5 !px-6"
                   >
-                    Send Another Inquiry
+                    {t.contact.sendAgain}
                   </button>
                 </motion.div>
               ) : (

@@ -4,6 +4,8 @@ A responsive marketing website and platform application for **AGverse**, a Dubai
 
 Built according to the comprehensive **AGverse Website: Build Specification** (Base System + Part B Enhancements).
 
+The [Laravel CMS setup guide](backend/README.md) covers database configuration, creating an admin account, and publishing pages, articles, and media from `/admin/media`.
+
 ---
 
 ## 🌿 Brand & Design System

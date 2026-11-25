@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -15,131 +15,123 @@ import Footer from './components/Footer';
 import AuditCalendarModal from './components/AuditCalendarModal';
 import LegalModal from './components/LegalModal';
 import CookieBanner from './components/CookieBanner';
-import { translations } from './data/translations';
+import { Articles, ContentBlock } from './components/CmsContent';
+import { defaultPage, defaultSettings } from './data/cmsDefaults';
 
-export default function App() {
-  const [lang, setLang] = useState('en');
+const sections = {
+  hero: Hero, about: About, technology: Technology, stats: Statistics, ctaBanner: CallToAction,
+  sustainability: Sustainability, roi: RoiCalculator, ndviDemo: DroneSimulator,
+  caseStudies: CaseStudiesAndProof, faq: FaqAccordion, contact: Contact,
+};
+
+const path = window.location.pathname.replace(/\/$/, '') || '/';
+const isPreview = new URLSearchParams(window.location.search).has('preview');
+const fetchPath = isPreview ? '/admin/preview' : '/api/cms';
+
+export default function CmsApp() {
+  const [lang, setLang] = useState(() => localStorage.getItem('agverse-language') === 'ar' ? 'ar' : 'en');
   const [isDark, setIsDark] = useState(false);
-  const [selectedInterest, setSelectedInterest] = useState('Tech Audit');
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [legalModalState, setLegalModalState] = useState({ isOpen: false, type: 'privacy' });
+  const [interest, setInterest] = useState('Tech Audit');
+  const [calendar, setCalendar] = useState(false);
+  const [legal, setLegal] = useState(null);
+  const [site, setSite] = useState(null);
 
-  // Update dark mode class on html root
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const controller = new AbortController();
+    fetch(`${fetchPath}?path=${encodeURIComponent(path)}`, { signal: controller.signal, headers: { Accept: 'application/json' } })
+      .then(async (response) => {
+        if (!response.ok && response.status !== 404) throw new Error('CMS unavailable');
+        setSite(await response.json());
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') setSite({ unavailable: true });
+      });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    localStorage.setItem('agverse-language', lang);
+  }, [lang]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
   }, [isDark]);
 
-  const t = translations[lang] || translations.en;
+  const publishedSettings = site?.settings?.[lang];
+  const settings = {
+    ...defaultSettings[lang],
+    ...publishedSettings,
+    footer: { ...defaultSettings[lang].footer, ...publishedSettings?.footer },
+  };
+  const page = site?.kind === 'page' && site.content
+    ? site.content
+    : path === '/' && !isPreview ? defaultPage : null;
+  const article = site?.kind === 'article' ? site.content : null;
+  const articleMeta = article?.[lang] || {};
+  const pageMeta = page?.content?.[lang]?.meta;
+  const title = articleMeta.seoTitle || articleMeta.title || article?.en?.seoTitle || article?.en?.title ||
+    pageMeta?.title || (site?.kind === 'articleIndex' ? (lang === 'ar' ? 'المقالات' : 'Articles') : settings.seoTitle);
+  const description = articleMeta.seoDescription || articleMeta.summary || article?.en?.seoDescription || article?.en?.summary ||
+    pageMeta?.description || settings.seoDescription;
 
-  const handleSelectInterest = (interestName) => {
-    setSelectedInterest(interestName);
-    const contactElem = document.getElementById('contact');
-    if (contactElem) {
-      contactElem.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    if (title) document.title = title;
+    const metadata = {
+      'meta[name="title"], meta[property="og:title"], meta[property="twitter:title"]': title,
+      'meta[name="description"], meta[property="og:description"], meta[property="twitter:description"]': description,
+      'meta[property="og:url"], meta[property="twitter:url"]': new URL(path, window.location.origin).href,
+      'meta[property="og:site_name"], meta[name="author"]': settings.brand,
+      'meta[property="og:locale"]': lang === 'ar' ? 'ar_AE' : 'en_US',
+      'meta[property="og:type"]': article ? 'article' : 'website',
+    };
+    for (const [selector, value] of Object.entries(metadata)) {
+      if (value) document.querySelectorAll(selector).forEach((element) => { element.content = value; });
     }
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.href = new URL(path, window.location.origin).href;
+  }, [title, description, settings.brand, lang, article]);
+
+  const handleInterest = (name) => {
+    setInterest(name);
+    const contact = document.getElementById('contact');
+    if (contact) contact.scrollIntoView({ behavior: 'smooth' });
+    else if (path !== '/') window.location.assign('/#contact');
   };
 
+  const t = { ...settings, homeHref: path === '/' ? '#home' : '/#home' };
+  const openAudit = () => setCalendar(true);
   return (
-    <div className="min-h-screen bg-[#F5F1E8] dark:bg-[#0B3D2E] text-[#14201B] dark:text-[#F5F1E8] flex flex-col transition-colors duration-300">
-      {/* Sticky Navigation Header */}
-      <Navbar
-        lang={lang}
-        setLang={setLang}
-        t={t}
-        isDark={isDark}
-        setIsDark={setIsDark}
-        onOpenAudit={() => setIsCalendarOpen(true)}
-      />
-
-      {/* Main Content Sections (Strict Order as Specified) */}
+    <div className="min-h-screen bg-[#F5F1E8] dark:bg-[#0B3D2E] text-[#14201B] dark:text-[#F5F1E8] flex flex-col">
+      <Navbar t={t} lang={lang} setLang={setLang} isDark={isDark} setIsDark={setIsDark} onOpenAudit={openAudit} solid={page?.blocks.find((block) => block.enabled)?.type !== 'hero'}>
+        {isPreview && (
+          <p className="bg-[#8BC34A] px-4 py-1.5 text-center text-sm text-[#0B3D2E]">
+            Draft preview · <a href="/admin/media" className="font-semibold underline underline-offset-2">Back to editor</a>
+          </p>
+        )}
+      </Navbar>
       <main id="main-content" className="flex-1">
-        {/* 4.1 Hero */}
-        <Hero
-          t={t}
-          onSelectInterest={handleSelectInterest}
-        />
-
-        {/* 4.2 About */}
-        <About
-          t={t}
-        />
-
-        {/* 4.3 Technology */}
-        <Technology
-          t={t}
-        />
-
-        {/* 4.4 Stats Band */}
-        <Statistics
-          t={t}
-        />
-
-        {/* 4.5 CTA Banner */}
-        <CallToAction
-          t={t}
-          onSelectInterest={handleSelectInterest}
-        />
-
-        {/* 4.6 Sustainability */}
-        <Sustainability
-          t={t}
-        />
-
-        {/* Part B Enhancements: ROI Calculator */}
-        <RoiCalculator
-          t={t}
-          onSelectInterest={handleSelectInterest}
-        />
-
-        {/* Part B Enhancements: Drone NDVI Multispectral Simulator */}
-        <DroneSimulator
-          t={t}
-        />
-
-        {/* Part B Enhancements: Verified Case Studies & Regional Proof */}
-        <CaseStudiesAndProof
-          t={t}
-        />
-
-        {/* Part B Enhancements: FAQ Accordion */}
-        <FaqAccordion
-          t={t}
-        />
-
-        {/* 4.7 Contact Section */}
-        <Contact
-          t={t}
-          selectedInterest={selectedInterest}
-          onOpenCalendar={() => setIsCalendarOpen(true)}
-        />
+        {page ? page.blocks.filter((block) => block.enabled).map((block) => {
+          const content = page.content?.[lang]?.[block.id] ?? page.content?.en?.[block.id];
+          if (!content) return null;
+          const Section = sections[block.type];
+          return Section
+            ? <Section key={block.id} lang={lang} t={{ ...t, [block.type]: { ...defaultPage.content[lang][block.type], ...content } }} onSelectInterest={handleInterest} selectedInterest={interest} onOpenCalendar={openAudit} />
+            : <ContentBlock key={block.id} lang={lang} type={block.type} content={content} />;
+        }) : article || site?.kind === 'articleIndex' ? (
+          <Articles article={article} articles={site.articles} lang={lang} />
+        ) : (
+          <section className="section-container pt-32 pb-20">
+            <h1 className="font-heading text-4xl">{!site ? 'Loading…' : site.unavailable ? 'Content unavailable' : 'Page not found'}</h1>
+            {site && <a className="underline" href="/">Home</a>}
+          </section>
+        )}
       </main>
-
-      {/* Footer */}
-      <Footer
-        t={t}
-        onOpenPrivacy={() => setLegalModalState({ isOpen: true, type: 'privacy' })}
-        onOpenTerms={() => setLegalModalState({ isOpen: true, type: 'terms' })}
-      />
-
-      {/* Interactive Modals & Banners */}
-      <AuditCalendarModal
-        isOpen={isCalendarOpen}
-        onClose={() => setIsCalendarOpen(false)}
-      />
-
-      <LegalModal
-        isOpen={legalModalState.isOpen}
-        type={legalModalState.type}
-        onClose={() => setLegalModalState({ isOpen: false, type: 'privacy' })}
-      />
-
-      <CookieBanner
-        onOpenPrivacy={() => setLegalModalState({ isOpen: true, type: 'privacy' })}
-      />
+      <Footer t={t} onOpenPrivacy={() => setLegal('privacy')} onOpenTerms={() => setLegal('terms')} />
+      <AuditCalendarModal isOpen={calendar} onClose={() => setCalendar(false)} content={settings.auditCalendar} />
+      <LegalModal isOpen={Boolean(legal)} type={legal} onClose={() => setLegal(null)} content={settings.legal} />
+      <CookieBanner onOpenPrivacy={() => setLegal('privacy')} content={settings.cookies} />
     </div>
   );
 }
