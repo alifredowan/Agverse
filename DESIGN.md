@@ -90,7 +90,7 @@ The interface has been audited and verified via `npx impeccable detect client/sr
 - Full-stack interactive workflow:
   - Validates full name, corporate email, phone/WhatsApp, and farm name.
   - Captures acreage, operational location, and specific crop/irrigation challenges.
-  - Submits to Node.js REST API (`POST /api/audit-request`).
+  - Submits to Laravel REST API (`POST /api/audit-request`).
   - Returns a unique audit reference (`#AGV-XXXXXX`) and celebration confetti.
 
 ---

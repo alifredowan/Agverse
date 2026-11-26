@@ -123,13 +123,19 @@ The [Laravel CMS setup guide](backend/README.md) covers database configuration, 
   - Tailwind CSS 3
   - Framer Motion (scroll-reveal, drawers, modals)
   - Lucide React & inline SVG icon system
-- **Backend API**:
-  - Node.js & Express
-  - REST endpoints:
-    - `POST /api/contact`: Validates, prevents spam via honeypot, persists submission to `server/data/contacts.json`, logs payload to console, and returns 200 OK.
-    - `GET /api/contact`: Retrieves submitted contacts list.
-    - `POST /api/audit-request`: Diagnostic audit requests.
-    - `GET /api/health`: Health check and uptime.
+- **Backend API & CMS**:
+  - **Laravel 13** (PHP 8.3+)
+  - Dual database architecture:
+    - **PostgreSQL (`pgsql`)**: Primary database for CMS entries (`cms_entries`), admin users, sessions, cache, and jobs.
+    - **MySQL (`mysql`)**: Secondary database (`LEADS_DB_CONNECTION=mysql`) for `contact_submissions` and `audit_requests`.
+  - REST & CMS endpoints:
+    - `POST /api/contact`: Validates, prevents spam via honeypot (`bot_check`), rate-limited (`throttle:15,1`), persists to MySQL (`contact_submissions`), returns 200 OK.
+    - `GET /api/contact`: Protected by session `auth` (returns submitted contacts).
+    - `POST /api/audit-request`: Rate-limited (`throttle:15,1`), persists diagnostic audit requests to MySQL (`audit_requests`).
+    - `GET /api/audit-request` & `GET /api/audit-request/{ref}`: Protected by session `auth`.
+    - `GET /api/cms` & `/admin/*`: CMS content API, media uploads (`/cms-media/*`), and admin editor (`/admin/media`).
+    - `GET /api/ai/status` & `POST /api/ai/ask`: Anthropic Claude integration (`throttle:10,1`).
+    - `GET /api/health` & `GET /api/content`: Health check and site content JSON.
 - **SEO & Performance**:
   - Complete Open Graph & Twitter meta tags
   - Schema.org `Organization` JSON-LD
@@ -140,31 +146,34 @@ The [Laravel CMS setup guide](backend/README.md) covers database configuration, 
 ## 🏃 Running the Application
 
 ### 1. Prerequisites
-- **Node.js** v18+ (Tested on v24.13.1)
-- **npm** v9+
+- **Node.js** v18+ (for Vite frontend & `dev.js` orchestrator)
+- **PHP** 8.3+ & **Composer** (for Laravel 13 backend)
+- **PostgreSQL** (primary DB) & **MySQL** (leads DB)
 
-### 2. Install Dependencies (if not already installed)
+### 2. Install Dependencies & Migrate Databases
 ```bash
 npm run install:all
+cd backend
+php artisan migrate --seed
 ```
 
 ### 3. Development Mode
-Run both frontend and backend concurrently:
+Run both Vite frontend and Laravel backend concurrently:
 ```bash
 npm run dev
 ```
 - Client runs on `http://localhost:5050`
-- API requests to `/api/*` are proxied to the backend on `http://localhost:5001`
+- All `/api/*`, `/admin/*`, `/cms-media/*`, and `/cms-editor.js` requests are proxied to Laravel on `http://127.0.0.1:8000`
 
-### 4. Production Build & Execution
+### 4. Production Build & Tests
 ```bash
 # Build the client distribution
 npm run build
 
-# Start the unified production server
-npm start
+# Run Laravel test suite
+cd backend
+php artisan test
 ```
-The server serves the compiled frontend from `client/dist` and handles API requests on `http://localhost:5050`.
 
 ---
 

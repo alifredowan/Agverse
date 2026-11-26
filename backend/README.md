@@ -1,6 +1,6 @@
 # AGverse CMS
 
-Laravel 13 provides the admin editor, content API and media storage. React renders published content. Express continues to accept the existing form submissions.
+Laravel 13 provides the admin editor, content API, media storage, and all REST API endpoints (`/api/contact`, `/api/audit-request`, `/api/content`, `/api/ai/*`, `/api/health`). React renders published content.
 
 ## Local setup
 
@@ -14,7 +14,7 @@ Copy-Item .env.example .env
 php artisan key:generate
 ```
 
-For MySQL, create a database and set `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` in `backend/.env`. Use a database account scoped to this database. To use SQLite for local development, keep the example configuration and create `backend/database/database.sqlite` if it does not already exist.
+By default, `backend/.env` uses **PostgreSQL** (`DB_CONNECTION=pgsql`) as the primary database (`users`, `sessions`, `cache`, `jobs`, `cms_entries`) and **MySQL** (`LEADS_DB_CONNECTION=mysql` with `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_DATABASE`, `MYSQL_USERNAME`, `MYSQL_PASSWORD`) for `contact_submissions` and `audit_requests`. For single-database local development, you can set both `DB_CONNECTION` and `LEADS_DB_CONNECTION` to `pgsql`, `mysql`, or `sqlite`.
 
 ```powershell
 php artisan migrate --seed
@@ -38,7 +38,7 @@ The initial content is exported from the React defaults with `node client/script
 
 ## Production routing
 
-Use one HTTPS origin. Route `/admin` and descendants, `/api/cms`, `/cms-media/*`, and `/cms-editor.js` to Laravel with `backend/public` as its document root. Preserve the public host on requests to Laravel so login redirects and draft previews use the site origin. Route the existing Express `/api` endpoints to Express. Serve the React build with its SPA fallback for published page and article URLs. Article SEO fields populate the browser metadata after React loads.
+Use one HTTPS origin. Route `/admin` and descendants, `/api/*`, `/cms-media/*`, and `/cms-editor.js` to Laravel with `backend/public` as its document root. Preserve the public host on requests to Laravel so login redirects and draft previews use the site origin. Serve the React build with its SPA fallback for published page and article URLs. Article SEO fields populate the browser metadata after React loads.
 
 Set `APP_ENV=production`, `APP_DEBUG=false`, the public `APP_URL`, and `SESSION_SECURE_COOKIE=true` in the Laravel environment. Keep Laravel's media storage persistent across deploys. Configure PHP's upload limit to 50 MB and its POST limit to 52 MB, and match the web server request limit. Public media URLs can be shared independently of page publication.
 

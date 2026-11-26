@@ -3,12 +3,12 @@
 # 🌿 AGVERSE — Ecosystem & Technical Architecture
 
 **The Intelligence of the Earth | Global Food Producing Operating System**  
-*A modern, humanized full-stack web application built with React 18, Tailwind CSS, and Node.js / Express.*
+*A modern, humanized full-stack web application built with React 18, Tailwind CSS, and Laravel 13 (PostgreSQL + MySQL).*
 
 [![Status](https://img.shields.io/badge/Status-Operational%20%2F%20Live-2CC56F?style=for-the-badge&logo=statuspage&logoColor=white)](#)
 [![Port](https://img.shields.io/badge/Port-5050-ACD5D1?style=for-the-badge&logo=googlechrome&logoColor=021312)](#)
 [![Design](https://img.shields.io/badge/Design%20Engine-Impeccable%20Craft-0A2B27?style=for-the-badge&logo=figma&logoColor=ACD5D1)](#)
-[![Stack](https://img.shields.io/badge/Tech-React%20%7C%20Node%20%7C%20Express-021312?style=for-the-badge&logo=react&logoColor=61DAFB)](#)
+[![Stack](https://img.shields.io/badge/Tech-React%20%7C%20Laravel%2013%20%7C%20PostgreSQL%20%2B%20MySQL-021312?style=for-the-badge&logo=laravel&logoColor=FF2D20)](#)
 
 <p align="center">
   <a href="http://localhost:5050"><b>🌐 Live Preview (Port 5050)</b></a> •
@@ -48,20 +48,23 @@ flowchart TD
         I -.->|Triggers from any CTA| F
     end
 
-    subgraph Server["⚙️ Backend Server (Node.js & Express)"]
+    subgraph Server["⚙️ Backend Server (Laravel 13 on Port 8000)"]
         API_Health["GET /api/health<br/>System Status"]
         API_Audit_POST["POST /api/audit-request<br/>Validation & ID Gen"]
-        API_Audit_GET["GET /api/audit-request<br/>List Submissions"]
-        API_Content["GET /api/content<br/>Dynamic Site Data"]
+        API_Audit_GET["GET /api/audit-request<br/>Auth-Protected List"]
+        API_Contact["POST /api/contact<br/>Lead Capture"]
+        API_CMS["GET /api/cms & /admin/*<br/>CMS & Media"]
     end
 
-    subgraph Storage["💾 Persistent Data Layer"]
-        DB[("server/data/audits.json<br/>JSON File Store")]
+    subgraph Storage["💾 Dual Database Layer"]
+        PG[("PostgreSQL (agverse)<br/>users, sessions, cms_entries")]
+        MY[("MySQL (agverse_leads)<br/>contact_submissions, audit_requests")]
     end
 
     I -->|JSON POST Request| API_Audit_POST
-    API_Audit_POST -->|Save Record| DB
-    API_Audit_GET -->|Read Submissions| DB
+    API_Audit_POST -->|Save Record| MY
+    API_Audit_GET -->|Read Submissions| MY
+    API_CMS -->|Read / Write CMS| PG
 ```
 
 ---
@@ -146,7 +149,7 @@ Letter Tracking:    -0.03em on bold titles, +0.08em on uppercase mono specs
 
 ## 📡 REST API Specifications
 
-The Node.js Express backend serves both the API endpoints and the compiled React frontend on **port 5050**.
+The Laravel 13 backend (`127.0.0.1:8000`) serves all REST API endpoints, CMS APIs, and admin routes, proxied through Vite on **port 5050** in development.
 
 ### 1. Health Check
 ```http
@@ -156,9 +159,8 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "service": "AGverse API Server",
-  "time": "2026-11-14T07:09:36.951Z",
-  "uptime": 142.85
+  "service": "AGverse Laravel API",
+  "time": "2026-11-26T10:30:00+00:00"
 }
 ```
 
@@ -291,14 +293,12 @@ agverse/
 │   ├── vite.config.js                  # Vite server & API proxy on port 5050
 │   └── package.json                    # Client dependencies
 │
-├── 📂 server/                          # Node.js + Express API Backend
-│   ├── 📂 data/
-│   │   └── audits.json                 # File-backed persistence database
-│   ├── 📂 routes/
-│   │   ├── audit.js                    # Audit endpoints (POST, GET, by ID)
-│   │   └── content.js                  # Dynamic site content endpoint
-│   ├── server.js                       # Express app configured for port 5050
-│   └── package.json                    # Server dependencies
+├── 📂 backend/                         # Laravel 13 Backend & CMS
+│   ├── 📂 app/Http/Controllers/        # CmsController & Api/* controllers
+│   ├── 📂 app/Models/                  # User, CmsEntry, ContactSubmission, AuditRequest
+│   ├── 📂 database/migrations/         # PostgreSQL & MySQL schema migrations
+│   ├── 📂 routes/                      # web.php (CMS/Admin) & api.php (REST API)
+│   └── composer.json                   # PHP / Laravel dependencies
 │
 ├── dev.js                              # Concurrent development orchestrator
 ├── package.json                        # Root project scripts
@@ -322,11 +322,11 @@ npm run install:all
 ### 2. Running on Port 5050
 
 ```bash
-# Production server (Serves both UI & API from Express on port 5050)
-npm start
-
-# Development mode (Vite HMR on port 5050 proxying to backend)
+# Development mode (Vite HMR on port 5050 proxying to Laravel on 8000)
 npm run dev
+
+# Run Laravel backend directly
+npm start
 ```
 
 ### 3. Quality & Design Verification
